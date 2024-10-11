@@ -17,6 +17,7 @@ lazy val root = project
     description  := "SBT defaults for LaserDisc projects",
     compileSettings,
     testSettings,
+    publishSettings,
     dependencies,
     addCommandAlias("format", ";scalafmtAll;scalafmtSbt"),
     addCommandAlias("checkFormat", ";scalafmtCheckAll;scalafmtSbtCheck"),
@@ -55,6 +56,21 @@ def testSettings = Seq(
       s"-Dsbt.boot.directory=${file(sys.props("user.home")) / ".sbt" / "boot"}" // https://github.com/sbt/sbt/issues/3469
     ),
   scriptedBufferLog := false // set to true to suppress detailed scripted test output
+)
+
+lazy val publishSettings = Seq(
+  Test / publishArtifact := false,
+  pomIncludeRepository   := (_ => false),
+  organization           := "io.laserdisc",
+  homepage               := Some(url("http://laserdisc.io/sbt-laserdisc-defaults")),
+  developers             := List(Developer("barryoneill", "Barry O'Neill", "", url("https://github.com/barryoneill"))),
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/laserdisc-io/sbt-laserdisc-defaults/tree/master"),
+      "scm:git:git@github.com:laserdisc-io/sbt-laserdisc-defaults.git"
+    )
+  ),
+  licenses := Seq("MIT" -> url("https://raw.githubusercontent.com/laserdisc-io/sbt-laserdisc-defaults/master/LICENSE"))
 )
 
 // local dependencies for this plugin
