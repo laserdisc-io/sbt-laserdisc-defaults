@@ -1,5 +1,8 @@
 # sbt-laserdisc-defaults
 
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/laserdisc-io/sbt-laserdisc-defaults/build.yaml)](https://github.com/laserdisc-io/sbt-laserdisc-defaults/actions/workflows/build.yaml)
+[![GitHub Release](https://img.shields.io/github/v/release/laserdisc-io/sbt-laserdisc-defaults)](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/latest)
+
 A plugin to reduce the boilerplate in many of the simpler laserdisc projects (but can be used in any sbt project).  
 It auto-configures things like sbt & scala versioning, cross compiling, scalafmt & git configuration and more. 
 
@@ -102,7 +105,7 @@ When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserd
 
 ## Releasing
 
-Draft [a new release](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/new), ensuring the format of the release follows the `v1.2.3` format (note the `v` prefix), and the appropriate [Github Action](.github/workflows/release.yml) will publish version `1.2.3` (without the v) to sonatype.
+Draft [a new release](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/new), ensuring the format of the release follows the `v1.2.3` format (note the `v` prefix), and the appropriate [Github Action](.github/workflows/release.yaml) will publish version `1.2.3` (without the v) to sonatype.
 
 ## Developing Tips
 
