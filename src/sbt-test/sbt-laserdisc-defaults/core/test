@@ -1,0 +1,9 @@
+# for help, see sbt-test/README.md in this repo
+
+> +checkCoreSettingsActive
+
+# check some of the "addCommandAlias" configs (except for release, we don't want to publish anything)
+> format
+> checkFormat
+> build
+

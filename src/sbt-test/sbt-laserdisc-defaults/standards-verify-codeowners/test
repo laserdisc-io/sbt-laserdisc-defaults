@@ -1,0 +1,13 @@
+# for help, see sbt-test/README.md in this repo
+
+# ensure there isn't a codeowners file, then expect 'dist' to fail
+-$ exists CODEOWNERS
+-> +dist
+
+# an empty codeowners file should also fail
+$ copy-file CODEOWNERS-empty CODEOWNERS
+-> +dist
+
+# happy path
+$ copy-file CODEOWNERS-valid CODEOWNERS
+> +dist

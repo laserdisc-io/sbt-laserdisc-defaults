@@ -1,0 +1,39 @@
+### ---------------------- warning ---------------------------------------
+### This file has a dual purpose:
+### - it is the regular gitignore config for this repo
+### - it is bundled inside the sbt-laserdisc-defaults plugin, which will use it
+###   for templating the .gitignore in all projects it manages
+###
+### (All comments with ### will be filtered out during template rendering)
+### ----------------------------------------------------------------------
+
+# tip: use a "global" gitignore (core.excludesfile) for your own, local, personal preferences
+# See: https://gist.github.com/subfuzion/db7f57fff2fb6998a16c
+
+# scala / sbt / java
+project/project/
+project/target/
+target/
+.sbtopts
+.tasty
+
+# intellij
+.idea/
+*.iml
+
+# metals / bsp
+.metals/
+.bloop/
+.bsp/
+project/metals.sbt
+
+# vscode
+.vscode/
+
+# terraform
+.terraform/
+*.tfplan
+*.terraform.lock.hcl
+
+# mac
+.DS_Store

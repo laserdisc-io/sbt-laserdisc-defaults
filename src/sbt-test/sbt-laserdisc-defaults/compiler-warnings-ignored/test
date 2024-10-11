@@ -1,0 +1,5 @@
+# for help, see sbt-test/README.md in this repo
+
+# see that 'laserdiscFailOnWarn := true' in the build.sbt causes the warning to not fail the build
+> +compile
+
