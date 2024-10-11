@@ -1,0 +1,6 @@
+this is some text
+that should be used
+by the tests to provide default data
+to be overwritten
+by the templating code
+

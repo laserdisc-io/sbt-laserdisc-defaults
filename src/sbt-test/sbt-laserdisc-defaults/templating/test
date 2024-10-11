@@ -1,0 +1,39 @@
+# for help, see sbt-test/README.md in this repo
+
+# ----------------------------------------------------------
+# Scenario 1 - project starts off empty
+
+$ delete .scalafmt.conf .gitignore project/build.properties
+> reload
+> +verifyFileWasTemplated .scalafmt.conf
+> +verifyFileWasTemplated .gitignore
+> +verifyFileWasTemplated project/build.properties
+
+# ----------------------------------------------------------
+# Scenario 2 - files start off with different content
+# (will invoke `reload` in the middle to trigger plugin)
+
+$ copy-file random-text.txt .scalafmt.conf
+$ copy-file random-text.txt .gitignore
+> reload
+> +verifyFileWasTemplated .scalafmt.conf
+> +verifyFileWasTemplated .gitignore
+
+# ----------------------------------------------------------
+# Scenario 3 - old SBT version should get templated
+> writeSBTVersion 1.9.0
+> +verifyFileWasTemplated project/build.properties
+> +verifyCurrentSBTVersion
+
+# ----------------------------------------------------------
+# Scenario 4 - current version should get templated (if not already)
+> writeCurrentSBTVersion
+> +verifyFileWasTemplated project/build.properties
+> +verifyCurrentSBTVersion
+
+# ----------------------------------------------------------
+# Scenario 4 - a newer SBT version should not be downgraded
+> writeSBTVersion 99999.0.0
+-> +verifyFileWasTemplated project/build.properties
+> +verifySBTVersion 99999.0.0
+

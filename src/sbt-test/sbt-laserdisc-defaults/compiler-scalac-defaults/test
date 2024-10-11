@@ -1,0 +1,40 @@
+# for help, see sbt-test/README.md in this repo
+
+# ------------------------------------------------------------------------------------------
+# without any settings, it should build for scala 3 only
+> +compile
+> hasCompilerFlags 3
+> hasCompileOutput shouldOnlyCompileForScala3
+
+# ------------------------------------------------------------------------------------------
+# should be the same when the flag is explicitly set for scala 3
+> set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala3Only
+> clean
+> +compile
+> hasCompilerFlags 3
+> hasCompileOutput shouldOnlyCompileForScala3
+
+# ------------------------------------------------------------------------------------------
+# check that only scala2 output is generated
+> set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala2Only
+> clean
+> +compile
+> hasCompilerFlags 2
+> hasCompileOutput shouldOnlyCompileForScala2
+
+# ------------------------------------------------------------------------------------------
+# check that cross compiling works
+> set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala2And3
+> clean
+> +compile
+> hasCompileOutput shouldCrossCompileFor2And3
+
+# ------------------------------------------------------------------------------------------
+# the "build" alias should also invoke +compile for cross compilation
+> set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala2And3
+> clean
+> build
+> hasCompileOutput shouldCrossCompileFor2And3
+
+
+
