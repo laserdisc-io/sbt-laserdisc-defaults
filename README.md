@@ -102,9 +102,7 @@ When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserd
 
 ## Releasing
 
-Draft [a new release](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/new), ensuring the format of the release follows the `v1.2.3` format (note the `v` prefix)
-
-TODO
+Draft [a new release](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/new), ensuring the format of the release follows the `v1.2.3` format (note the `v` prefix), and the appropriate [Github Action](.github/workflows/release.yml) will publish version `1.2.3` (without the v) to sonatype.
 
 ## Developing Tips
 
