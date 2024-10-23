@@ -1,11 +1,10 @@
 package laserdisc.sbt.category
 
-import laserdisc.sbt.LaserDiscDefaultsPlugin.autoImport.laserdiscScalaFmtGenOn
-import laserdisc.sbt.io.*
 import laserdisc.sbt.*
+import laserdisc.sbt.io.*
 import sbt.*
 
-object ScalaFmt extends DefaultsCategory with FileTemplater {
+case class ScalaFmt(enabledKey: SettingKey[Boolean]) extends DefaultsCategory with FileTemplater {
 
   override def projectSettings: Seq[Def.Setting[State => State]] =
     addCommandAlias("format", ";scalafmtAll; scalafmtSbt") ++
@@ -13,11 +12,11 @@ object ScalaFmt extends DefaultsCategory with FileTemplater {
 
   override def buildSettings: Seq[Def.Setting[?]] =
     Seq(
-      laserdiscScalaFmtGenOn := getSystemPropBoolean(laserdiscScalaFmtGenOn, default = true, log.value),
+      enabledKey := getSystemPropBoolean(enabledKey, default = true, log.value),
       generateSettings
     )
 
-  override def enabledFlag: SettingKey[Boolean] = laserdiscScalaFmtGenOn
+  override def enabledFlag: SettingKey[Boolean] = enabledKey
 
   override def inputResourceName: String = "templates/.scalafmt.conf"
 

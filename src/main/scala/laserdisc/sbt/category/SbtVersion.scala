@@ -1,7 +1,7 @@
 package laserdisc.sbt.category
 
 import laserdisc.sbt.*
-import laserdisc.sbt.LaserDiscDefaultsPlugin.autoImport.laserdiscSBTVersionGenOn
+import laserdisc.sbt.category.SbtVersion.StringOps
 import laserdisc.sbt.defaults.PluginInfo
 import laserdisc.sbt.io.{FileTemplater, readResourceStream}
 import org.apache.maven.artifact.versioning.ComparableVersion
@@ -13,14 +13,14 @@ import scala.collection.JavaConverters.*
 import scala.tools.nsc.interpreter.InputStream
 import scala.util.{Failure, Success, Try}
 
-object SbtVersion extends DefaultsCategory with FileTemplater {
+case class SbtVersion(enabledKey: SettingKey[Boolean]) extends DefaultsCategory with FileTemplater {
 
   val BuildPropsResource = "templates/project/build.properties"
   val BuildPropsDest     = new File("project/build.properties")
 
   override def buildSettings: Seq[Def.Setting[?]] = Seq(
-    laserdiscSBTVersionGenOn := {
-      var defaultValue = getSystemPropBoolean(laserdiscSBTVersionGenOn, default = true, log.value)
+    enabledKey := {
+      var defaultValue = getSystemPropBoolean(enabledKey, default = true, log.value)
 
       // we pull the SBT version that the plugin was built with (hence going to resources)
       // then grab the SBT version from the local project (we _could_ use `sbt.Keys.sbtVersion` but this avoids testing complications)
@@ -49,7 +49,7 @@ object SbtVersion extends DefaultsCategory with FileTemplater {
     generateSettings
   )
 
-  override def enabledFlag: SettingKey[Boolean] = laserdiscSBTVersionGenOn
+  override def enabledFlag: SettingKey[Boolean] = enabledKey
 
   override def inputResourceName: String = "templates/project/build.properties"
 
@@ -69,8 +69,10 @@ object SbtVersion extends DefaultsCategory with FileTemplater {
 
   }
 
+}
+
+object SbtVersion {
   implicit class StringOps(val str: String) extends AnyVal {
     def newerThan(other: String): Boolean = new ComparableVersion(str).compareTo(new ComparableVersion(other)) > 0
   }
-
 }

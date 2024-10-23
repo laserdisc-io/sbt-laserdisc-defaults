@@ -1,11 +1,10 @@
 package laserdisc.sbt.category
 
-import laserdisc.sbt.LaserDiscDefaultsPlugin.autoImport.*
 import laserdisc.sbt.{CompileTarget, DefaultsCategory, LoggerOps}
 import sbt.*
 import sbt.Keys.*
 
-object Compiler extends DefaultsCategory {
+case class Compiler(failOnWarnKey: SettingKey[Boolean], compilerTargetKey: SettingKey[CompileTarget]) extends DefaultsCategory {
 
   private object ScalacFlags {
     def Common(failOnWarn: Boolean): Seq[String] = Seq(
@@ -59,7 +58,7 @@ object Compiler extends DefaultsCategory {
   }
 
   override def projectSettings: Seq[Def.Setting[?]] = Seq(
-    scalacOptions ++= ScalacFlags.Common(laserdiscFailOnWarn.value),
+    scalacOptions ++= ScalacFlags.Common(failOnWarnKey.value),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((3, _))                    => ScalacFlags.Version3x
@@ -81,10 +80,10 @@ object Compiler extends DefaultsCategory {
 
   override def buildSettings: Seq[Def.Setting[?]] =
     Seq(
-      laserdiscCompileTarget := CompileTarget.Default,
-      scalaVersion           := laserdiscCompileTarget.value.defaultScalaVersion,
-      crossScalaVersions     := laserdiscCompileTarget.value.crossVersions,
-      laserdiscFailOnWarn    := getSystemPropBoolean(laserdiscFailOnWarn, default = true, logger.value),
+      compilerTargetKey  := CompileTarget.Default,
+      scalaVersion       := compilerTargetKey.value.defaultScalaVersion,
+      crossScalaVersions := compilerTargetKey.value.crossVersions,
+      failOnWarnKey      := getSystemPropBoolean(failOnWarnKey, default = true, logger.value),
       displayInfo()
     )
 

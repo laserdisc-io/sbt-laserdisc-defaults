@@ -10,6 +10,7 @@ addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.0.
 lazy val root = project
   .in(file("."))
   .settings(
+    version      := "BARRYTEST-SNAPSHOT",
     scalaVersion := "2.12.20",
     sbtPlugin    := true,
     name         := "sbt-laserdisc-defaults",
@@ -24,7 +25,7 @@ lazy val root = project
     addCommandAlias("build", ";checkFormat;clean;scripted"), // note: `scripted` to invoke plugin tests
     addCommandAlias("release", ";build;publish")
   )
-  .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, BuildInfoPlugin, GitVersioning)
+  .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, BuildInfoPlugin) // TODO: restore
 
 def compileSettings = Seq(
   Compile / resourceGenerators += FileTemplates.copyToResources,

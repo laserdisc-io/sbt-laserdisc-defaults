@@ -5,12 +5,8 @@ import laserdisc.sbt.defaults.PluginInfo
 import org.scalafmt.sbt.ScalafmtPlugin.autoImport.{scalafmtAll, scalafmtCheckAll, scalafmtSbt, scalafmtSbtCheck}
 import sbt.Keys.*
 import sbt.{Def, *}
-import laserdisc.sbt.DefaultsCategory
 
 object Core extends DefaultsCategory {
-
-  private val BasePackage = "io.laserdisc"
-  private val OrgName     = "LaserDisc"
 
   // note how these aliases use `+` on the build/release tasks for cross compilation
   override def projectSettings: Seq[Def.Setting[State => State]] =
@@ -20,9 +16,6 @@ object Core extends DefaultsCategory {
       addCommandAlias("release", s";build; +${publish.key.label}")
 
   override def buildSettings: Seq[Def.Setting[?]] = Seq(
-    organization     := BasePackage,
-    organizationName := OrgName,
-
     // this setting key doesn't do anything, but is simply a hook to display a message when SBT loads the project
     SettingKey[Unit]("laserdiscDefaultsCoreInfo") := {
       val msg  = s"${PluginInfo.name} plugin (v${PluginInfo.version}) is applying defaults"
