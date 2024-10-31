@@ -1,3 +1,6 @@
+import com.github.sbt.git.JGit
+import com.github.sbt.git.SbtGit.GitKeys.gitReader
+
 ThisBuild / organization     := "io.laserdisc"
 ThisBuild / organizationName := "LaserDisc"
 

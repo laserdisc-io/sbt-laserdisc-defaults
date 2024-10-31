@@ -1,8 +1,10 @@
 package laserdisc.sbt
 
-import sbt.{Logger, SettingKey}
+import sbt.{Logger, SettingKey, URL}
 
 package object category {
+
+  type License = (String, URL)
 
   def getSystemPropBoolean(sk: SettingKey[?], default: Boolean, logger: Logger)(implicit ctx: PluginContext): Boolean = {
     val name = sk.key.label

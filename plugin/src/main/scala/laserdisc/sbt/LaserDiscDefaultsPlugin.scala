@@ -13,8 +13,8 @@ object LaserDiscDefaultsPlugin extends LaserDiscDefaultsPluginBase {
     lazy val laserdiscGitConfigGenOn  = settingKey[Boolean]("Enable .gitconfig generation. Enabled by default.")
     lazy val laserdiscSBTVersionGenOn = settingKey[Boolean]("Enable SBT version generation. Enabled by default.")
     lazy val laserdiscCompileTarget   = settingKey[CompileTarget]("'Scala2Only', 'Scala3Only' (default), or to cross compile, 'Scala2And3'")
-    lazy val laserdiscPublishSettings = settingKey[PublishInfo]("Publishing Information.") // TODO: docs
-    lazy val laserdiscRepoName        = settingKey[String]("Publishing Information.")      // TODO: docs
+    lazy val laserdiscPublishDefaults = settingKey[PublishDefaults]("Publishing Information.") // TODO: docs
+    lazy val laserdiscRepoName        = settingKey[String]("Publishing Information.")          // TODO: docs
   }
 
   implicit val pluginCtx: PluginContext = PluginContext(
@@ -23,14 +23,15 @@ object LaserDiscDefaultsPlugin extends LaserDiscDefaultsPluginBase {
     pluginHomepage = "https://github.com/laserdisc-io/sbt-laserdisc-defaults"
   )
 
-  private val LaserDiscPublishingDefaults = GithubPublishSettings(
-    publishOrgName = "LaserDisc",
-    publishGroupId = "io.laserdisc",
-    githubOrg = "laserdisc-io"
-  )
+  val LaserDiscPublishingDefaults = new GithubPublishDefaults {
+    override def githubOrg: String          = "laserdisc-io"
+    override def orgName: String            = "LaserDisc"
+    override def groupId: String            = "io.laserdisc"
+    override def licenseCheck: LicenseCheck = LicenseRequired
+  }
 
   override val categories: Seq[DefaultsCategory] = Seq(
-    Publishing(laserdiscPublishSettings, laserdiscRepoName, LaserDiscPublishingDefaults),
+    Publishing(laserdiscPublishDefaults, laserdiscRepoName, LaserDiscPublishingDefaults),
     ScalaFmt(laserdiscScalaFmtGenOn),
     GitIgnore(laserdiscGitConfigGenOn),
     Compiler(laserdiscFailOnWarn, laserdiscCompileTarget),

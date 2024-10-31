@@ -15,6 +15,9 @@ package object sbt {
 
   val log: SettingKey[Logger] = Keys.sLog
 
+  def fail[T](msg: String)(implicit ctx: PluginContext): T =
+    throw new MessageOnlyException(s"[${ctx.pluginName}] $msg")
+
   def fail[T](msg: String, e: Throwable)(implicit ctx: PluginContext): T =
     throw new MessageOnlyException(s"[${ctx.pluginName}] $msg - ${e.getClass.getSimpleName}:${e.getMessage}")
 

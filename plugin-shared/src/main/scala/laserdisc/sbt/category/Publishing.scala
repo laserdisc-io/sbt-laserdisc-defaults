@@ -2,72 +2,35 @@ package laserdisc.sbt.category
 
 import com.github.sbt.git.ReadableGit
 import com.github.sbt.git.SbtGit.GitKeys.gitReader
-import laserdisc.sbt.{DefaultsCategory, PluginContext, PublishInfo}
+import laserdisc.sbt.{DefaultsCategory, PluginContext, PublishDefaults}
 import sbt.*
 import sbt.Keys.*
-import sbt.librarymanagement.License.MIT
 
-case class Publishing(publishSettingKey: SettingKey[PublishInfo], repoNameKey: SettingKey[String], publishSettingsDefaults: PublishInfo)(
+case class Publishing(
+    publishDefaultsKey: SettingKey[PublishDefaults],
+    repoNameKey: SettingKey[String],
+    publishDefaults: PublishDefaults
+)(
     implicit val ctx: PluginContext
 ) extends DefaultsCategory {
-
-  private type License = (String, URL)
 
   override def projectSettings: Seq[Def.Setting[?]] = Seq()
 
   override def buildSettings: Seq[Def.Setting[?]] =
     Seq(
-      publishSettingKey    := publishSettingsDefaults,
+      publishDefaultsKey   := publishDefaults,
       pomIncludeRepository := (_ => false),
-      organization         := publishSettingKey.value.publishGroupId,
-      organizationName     := publishSettingKey.value.publishOrgName,
-      homepage             := publishSettingKey.value.homepage(repoNameKey.value).some,
-      scmInfo              := publishSettingKey.value.scmInfo(repoNameKey.value, getBranchName(gitReader.value)).some
-
-      // licenses
-//      licenses := validateLicense(logger.value, licenses.value)
+      organization         := publishDefaultsKey.value.groupId,
+      organizationName     := publishDefaultsKey.value.orgName,
+      homepage             := publishDefaultsKey.value.homepage(repoNameKey.value).some,
+      scmInfo              := publishDefaultsKey.value.scmInfo(repoNameKey.value, getBranchName(gitReader.value)).some,
+      licenses             := publishDefaultsKey.value.licenseCheck.validate(licenses.value, logger.value)
     )
 
   // thanks, sbt-git
-  private def getBranchName(reader: ReadableGit): String = {
-
+  private def getBranchName(reader: ReadableGit): String =
     reader.withGit { t =>
-      println(s"AW SHUCKS: ${t.branch}")
-      t
+      t.branch
     }
-
-    Option(reader.withGit(_.branch)).getOrElse {
-      "poopBranch"
-//      throw new MessageOnlyException("Failed to determine current branch")
-    }
-  }
-
-  def validateLicense(log: Logger, buildDefLicense: Seq[License]): Seq[License] =
-//    val licenseFile = readFile(log, file("LICENSE"))
-
-//    (licenseFile, buildDefLicense, pluginSettings.license) match {
-//
-//      case (Right(_), Seq(), None) =>
-//        throw new MessageOnlyException("LICENSE file present but LICENSE not ")
-//
-//    }
-
-//    pluginSettings.license match {
-//      case Some(declared) => ???
-//      case None =>
-//        licenseFile match {
-//          case Left(_) => fallback
-//          case Right(contents) =>
-//            if (!contents.split("\n").headOption.exists(_.contains("MIT License"))) {
-//              throw new MessageOnlyException(
-//                "LICENSE file doesn't look like an MIT license, so you'll need to provide the 'license' attribute"
-//              )
-//            }
-//            License.MIT
-//        }
-//
-//    }
-
-    Seq(MIT)
 
 }
