@@ -6,6 +6,8 @@ import com.typesafe.sbt.SbtNativePackager.Universal
 import com.typesafe.sbt.packager.Keys.dist
 import sbt.*
 
+/** Right now, this just enforces the presence of a CODEOWNERS file.
+  */
 case class Standards()(implicit val ctx: PluginContext) extends DefaultsCategory {
 
   private lazy val laserdiscCheckForCodeOwners = taskKey[Unit]("Check that the repo has a valid CODEOWNERS file")

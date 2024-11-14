@@ -2,7 +2,9 @@ package laserdisc.sbt
 
 import sbt.{Developer, url}
 
-object LaserDiscMaintainers {
+/** Convenience so we don't have to repeat all this info in each laserdisc project
+  */
+object LaserDiscDevelopers {
   val Julien  = Developer("sirocchi", "Julien Sirocchi", "", url("https://github.com/sirocchj"))
   val Filippo = Developer("barambani", "Filippo Mariotti", "", url("https://github.com/barambani"))
   val Barry   = Developer("barryoneill", "Barry O'Neill", "", url("https://github.com/barryoneill"))

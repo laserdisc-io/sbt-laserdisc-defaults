@@ -1,6 +1,3 @@
-import com.github.sbt.git.JGit
-import com.github.sbt.git.SbtGit.GitKeys.gitReader
-
 ThisBuild / organization     := "io.laserdisc"
 ThisBuild / organizationName := "LaserDisc"
 
@@ -19,8 +16,6 @@ lazy val root = (project in file("."))
 lazy val plugin = project
   .in(file("plugin"))
   .settings(
-//    sbtPlugin        := true,
-    version          := "BARRYTEST-SNAPSHOT3", // TODO: hand off to sbt-git
     name             := "sbt-laserdisc-defaults",
     moduleName       := "sbt-laserdisc-defaults",
     description      := "SBT defaults for LaserDisc projects",
@@ -46,8 +41,7 @@ lazy val plugin = project
 lazy val `plugin-shared` = project
   .in(file("plugin-shared"))
   .settings(
-    version := "BARRYTEST-SNAPSHOT3", // TODO: had off to sbt-git
-    name    := "sbt-laserdisc-defaults-shared",
+    name := "sbt-laserdisc-defaults-shared",
     compileSettings,
     publishSettings,
     addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.5.2"),
@@ -58,7 +52,7 @@ lazy val `plugin-shared` = project
       "org.apache.maven" % "maven-artifact" % "3.9.9"
     )
   )
-  .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin) // TODO: restore
+  .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, GitPlugin)
 
 def compileSettings = Seq(
   Compile / resourceGenerators += FileTemplates.copyToResources,

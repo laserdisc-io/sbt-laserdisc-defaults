@@ -6,10 +6,20 @@ import laserdisc.sbt.{DefaultsCategory, PluginContext, PublishDefaults}
 import sbt.*
 import sbt.Keys.*
 
+object Publishing {
+  val DefaultsKeyDesc = "Override the publishing defaults (e.g. group/org information) set in this plugin."
+  val RepoNameKeyDesc = "Provide the repo name this codebase is located in.  Useful for code tracability."
+}
+
+/** Apply defaults related to publishing, specifically related to the organization and group names.
+  * @param publishDefaults Implementations of this plugin library provide their organization information here
+  * @param publishDefaultsKey The SBT key allowing the user to override `publishDefaults` locally
+  * @param repoNameKey The SBT key providing the repo name for the current project
+  */
 case class Publishing(
+    publishDefaults: PublishDefaults,
     publishDefaultsKey: SettingKey[PublishDefaults],
-    repoNameKey: SettingKey[String],
-    publishDefaults: PublishDefaults
+    repoNameKey: SettingKey[String]
 )(
     implicit val ctx: PluginContext
 ) extends DefaultsCategory {
@@ -28,9 +38,6 @@ case class Publishing(
     )
 
   // thanks, sbt-git
-  private def getBranchName(reader: ReadableGit): String =
-    reader.withGit { t =>
-      t.branch
-    }
+  private def getBranchName(reader: ReadableGit): String = reader.withGit(_.branch)
 
 }

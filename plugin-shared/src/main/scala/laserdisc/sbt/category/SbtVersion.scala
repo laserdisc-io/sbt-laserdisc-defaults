@@ -1,7 +1,7 @@
 package laserdisc.sbt.category
 
 import laserdisc.sbt.*
-import laserdisc.sbt.category.SbtVersion.StringOps
+import laserdisc.sbt.category.SbtVersion.*
 import laserdisc.sbt.io.{FileTemplater, readResourceStream}
 import org.apache.maven.artifact.versioning.ComparableVersion
 import sbt.*
@@ -14,11 +14,18 @@ import scala.util.{Failure, Success, Try}
 
 object SbtVersion {
 
+  private val EnabledDefault: Boolean = true
+
+  val EnabledKeyDesc = s"Enable SBT version generation (default:$EnabledDefault)"
+
   implicit class StringOps(val str: String) extends AnyVal {
     def newerThan(other: String): Boolean = new ComparableVersion(str).compareTo(new ComparableVersion(other)) > 0
   }
 }
 
+/** Auto-templates the sbt version in project/build.properties
+  * @param enabledKey The SBT key to control enable/disabling of this feature
+  */
 case class SbtVersion(enabledKey: SettingKey[Boolean])(implicit val ctx: PluginContext) extends FileTemplater with DefaultsCategory {
 
   val BuildPropsResource = "templates/project/build.properties"
@@ -26,7 +33,7 @@ case class SbtVersion(enabledKey: SettingKey[Boolean])(implicit val ctx: PluginC
 
   override def buildSettings: Seq[Def.Setting[?]] = Seq(
     enabledKey := {
-      var defaultValue = getSystemPropBoolean(enabledKey, default = true, log.value)
+      var defaultValue = getSystemPropBoolean(enabledKey, default = EnabledDefault, log.value)
 
       // we pull the SBT version that the plugin was built with (hence going to resources)
       // then grab the SBT version from the local project (we _could_ use `sbt.Keys.sbtVersion` but this avoids testing complications)

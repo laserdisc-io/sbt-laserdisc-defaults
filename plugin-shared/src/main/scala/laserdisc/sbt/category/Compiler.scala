@@ -1,11 +1,29 @@
 package laserdisc.sbt.category
 
+import laserdisc.sbt.CompileTarget.Scala3Only
 import laserdisc.sbt.{CompileTarget, DefaultsCategory, LoggerOps, PluginContext}
 import sbt.*
 import sbt.Keys.*
 
-case class Compiler(failOnWarnKey: SettingKey[Boolean], compilerTargetKey: SettingKey[CompileTarget])(implicit val ctx: PluginContext)
+object Compiler {
+  private val FailOnWarnDefault: Boolean          = true
+  private val CompileTargetDefault: CompileTarget = Scala3Only
+
+  val FailOnWarnKeyDesc: String    = s"Fail the build if any warnings are present (default: $FailOnWarnDefault)"
+  val CompileTargetKeyDesc: String = s"'Scala2Only', 'Scala3Only', or 'Scala2And3' to cross-compile (default:$CompileTargetDefault)"
+}
+
+/** Applies scala compiler settings, including scala version and compiler flags
+  * @param failOnWarnKey If this key is true, the compiler will emit warnings as errors, failing the build
+  * @param compilerTargetKey This value controls which scala version (and associated compiler flags) will be set
+  */
+case class Compiler(
+    failOnWarnKey: SettingKey[Boolean],
+    compilerTargetKey: SettingKey[CompileTarget]
+)(implicit val ctx: PluginContext)
     extends DefaultsCategory {
+
+  import laserdisc.sbt.category.Compiler.*
 
   private object ScalacFlags {
     def Common(failOnWarn: Boolean): Seq[String] = Seq(
@@ -81,10 +99,10 @@ case class Compiler(failOnWarnKey: SettingKey[Boolean], compilerTargetKey: Setti
 
   override def buildSettings: Seq[Def.Setting[?]] =
     Seq(
-      compilerTargetKey  := CompileTarget.Default,
+      compilerTargetKey  := CompileTargetDefault,
       scalaVersion       := compilerTargetKey.value.defaultScalaVersion,
       crossScalaVersions := compilerTargetKey.value.crossVersions,
-      failOnWarnKey      := getSystemPropBoolean(failOnWarnKey, default = true, logger.value),
+      failOnWarnKey      := getSystemPropBoolean(failOnWarnKey, default = FailOnWarnDefault, logger.value),
       displayInfo()
     )
 

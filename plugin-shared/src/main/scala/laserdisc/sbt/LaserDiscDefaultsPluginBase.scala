@@ -5,10 +5,17 @@ import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import org.scalafmt.sbt.ScalafmtPlugin
 import sbt.*
 
+/** Base class for concrete plugin implementnations
+  */
 abstract class LaserDiscDefaultsPluginBase extends AutoPlugin {
 
+  /** Plugin impls should provide information about themselves (e.g. name, version)
+    * so that log messages and errors can appropriately be associated with the plugin
+    */
   implicit val pluginCtx: PluginContext
 
+  /** Plugin impls can pick and choose [[DefaultsCategory]] implementations
+    */
   val categories: Seq[DefaultsCategory]
 
   /* These are the plugins we wish users of our plugin to automatically have. You will need to

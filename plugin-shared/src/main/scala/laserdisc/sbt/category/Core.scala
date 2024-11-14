@@ -5,6 +5,9 @@ import org.scalafmt.sbt.ScalafmtPlugin.autoImport.*
 import sbt.Keys.*
 import sbt.{Def, *}
 
+/** Adds some convenience command aliases, and emits some logging to the user on build init,
+  * showing the plugin information
+  */
 case class Core()(implicit val ctx: PluginContext) extends DefaultsCategory {
 
   // note how these aliases use `+` on the build/release tasks for cross compilation

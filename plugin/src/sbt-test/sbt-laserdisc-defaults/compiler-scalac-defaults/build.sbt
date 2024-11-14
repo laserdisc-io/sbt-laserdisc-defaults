@@ -4,11 +4,10 @@ import org.scalatest.matchers.should.Matchers.*
 import java.nio.file.Files
 import scala.collection.JavaConverters.*
 import com.github.sbt.git.SbtGit.GitKeys.gitReader
-import com.github.sbt.git.{DefaultReadableGit, ReadableGit, JGit}
 
 ThisBuild / laserdiscRepoName := "sbt-laserdisc-defaults"
 
-// TODO: doc
+// during scripted tests, the root of the project will not be the root of the repo so the git plugin will fail - this works around it
 val ProjectRoot = sys.props.getOrElse("plugin.project.rootdir", sys.error("expected system property \"plugin.project.rootdir\" to be provided"))
 ThisProject / gitReader :=  new DefaultReadableGit(file(ProjectRoot),None)
 

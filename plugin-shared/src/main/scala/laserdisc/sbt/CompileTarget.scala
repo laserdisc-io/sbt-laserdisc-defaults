@@ -16,7 +16,4 @@ object CompileTarget {
   // cross compiles, but defaults to scala 3 (affects mostly IDE auto-config)
   final case object Scala2And3 extends CompileTarget(Scala3Version, List(Scala2Version, Scala3Version))
 
-  /** By default, the plugin selects scala 3, developers should hopefully attempt to move directly to 3 */
-  val Default: CompileTarget = Scala3Only
-
 }
