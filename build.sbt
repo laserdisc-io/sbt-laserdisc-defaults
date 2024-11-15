@@ -6,7 +6,7 @@ ThisBuild / scalaVersion := "2.12.20"
 lazy val root = (project in file("."))
   .aggregate(`plugin`, `plugin-shared`)
   .settings(
-    name := "sbt-laserdisc-defaults-root",
+    name            := "sbt-laserdisc-defaults-root",
     publishArtifact := false,
     addCommandAlias("format", ";scalafmtAll;scalafmtSbt"),
     addCommandAlias("checkFormat", ";scalafmtCheckAll;scalafmtSbtCheck"),
