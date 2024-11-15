@@ -4,11 +4,11 @@
 [![GitHub Release](https://img.shields.io/github/v/release/laserdisc-io/sbt-laserdisc-defaults)](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/latest)
 
 A plugin to reduce the boilerplate in many of the simpler laserdisc projects (but can be used in any sbt project).  
-It auto-configures things like sbt & scala versioning, cross compiling, scalafmt & git configuration and more. 
+It auto-configures things like sbt & scala versioning, cross compiling, scalafmt & git configuration and more.
 
-See [what it does](#what-it-does) for full details.
+The plugin can be used as-is, or extended into your own custom plugin, picking and choosing the defaults you like!
 
-## Usage
+## Direct Usage
 
 Add the following to `project/plugins.sbt` :
 
@@ -29,6 +29,7 @@ lazy val root = (project in file("."))
 > **Note**
 > Any settings in your `build.sbt` **override** those set by this plugin. 
 
+
 ## What it Does
 
 When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserdisc/sbt/LaserDiscDefaultsPlugin.scala) will automatically perform the following:
@@ -38,6 +39,8 @@ When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserd
 * [sbt-scalafmt](https://github.com/scalameta/sbt-scalafmt) - for applying formatting standards automatically to source code
 * [sbt-git](https://github.com/sbt/sbt-git) - automatic versioning based on the current commit hash/tag
 * [sbt-native-packager](https://github.com/sbt/sbt-native-packager) - 
+
+### Categories
 
 **Apply [Core](src/main/scala/laserdisc/sbt/category/Core.scala) Settings**
 
@@ -103,7 +106,75 @@ When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserd
 
 * Fails the `dist` task if [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners) file is missing or empty.  
 
-## Releasing
+## Extending Your Own
+
+This SBT build comprises two modules:
+
+* [plugin](plugin)<br>
+  * This module builds and publishes the `sbt-laserdisc-defaults` SBT plugin.
+  * There is minimal code in this module, just the [concrete implementation](./plugin/src/main/scala/laserdisc/sbt/LaserDiscDefaultsPlugin.scala) of the shared code (next)
+
+* [plugin-shared](plugin-shared)<br>
+  * All the logic of the plugin is here, rolling up under an extendable `LaserDiscDefaultsPluginBase` abstract implementation.
+  * This library is published as a dependency JAR `io.laserdisc:sbt-laserdisc-defaults-shared` for custom implementations to extend.
+
+To build your own sbt plugin:
+
+1. Define an SBT plugin project, with a dependency on the shared library, and enable all the relevant plugins:
+   ```sbt
+   lazy val root = project
+    .in(file("."))
+    .settings(
+        sbtPlugin    := true,
+        organization := "com.modaoperandi",
+        name         := "sbt-moda-defaults",                        
+        addSbtPlugin("io.laserdisc" % "sbt-laserdisc-defaults-shared" % "<version>")
+        .... etc ...            
+   ```
+2. Then, create your implementation of [`LaserDiscDefaultsPluginBase`](./plugin-shared/src/main/scala/laserdisc/sbt/LaserDiscDefaultsPluginBase.scala).   The `sbt-laserdisc-defaults` plugin does this, so look [at the source](./plugin/src/main/scala/laserdisc/sbt/LaserDiscDefaultsPlugin.scala) for the actual code, but at a high level, it looks like this: 
+   ```scala
+
+   object LaserDiscDefaultsPlugin extends LaserDiscDefaultsPluginBase {
+    
+    // define the settings keys with your desired naming strategy
+    object autoImport {
+      lazy val laserdiscFailOnWarn      = settingKey[Boolean](Compiler.FailOnWarnKeyDesc)
+      lazy val laserdiscCompileTarget   = settingKey[CompileTarget](Compiler.CompileTargetKeyDesc)
+      // .. etc ..    
+    }
+    
+    // define the publishing settings everyone who uses this plugin should have
+    private val laserdiscDefaults = new GithubPublishDefaults {
+      override def githubOrg: String          = "springfield-nuclear"
+      override def orgName: String            = "Springfield Nuclear Power Plant"
+      override def groupId: String            = "com.simpsonsarchive.nuclear"
+      override def licenseCheck: LicenseCheck = LicenseRequired
+    }
+    
+    // for context if logging/errors is necessary (use https://github.com/sbt/sbt-buildinfo) 
+    override implicit val pluginCtx: PluginContext = PluginContext(
+      pluginName = PluginBuildInfo.name,
+      pluginVersion = PluginBuildInfo.version,
+      pluginHomepage = "https://github.com/springfield-nuclear/springfield-nuclear-plant"
+    )
+    
+    // select all the category implementation you want (or create your own), passing in the key defs from above
+    override val categories: Seq[DefaultsCategory] = Seq(
+      Publishing(laserdiscDefaults, laserdiscPublishDefaults, laserdiscRepoName),      
+      Compiler(laserdiscFailOnWarn, laserdiscCompileTarget),
+      Standards(),      
+      Core() // keep last, so the warning message about defaults being used shows first
+    )
+    
+   }
+
+
+   ```
+   
+And that's it! 
+
+
+## Releasing This Plugin
 
 Draft [a new release](https://github.com/laserdisc-io/sbt-laserdisc-defaults/releases/new), ensuring the format of the release follows the `v1.2.3` format (note the `v` prefix), and the appropriate [Github Action](.github/workflows/release.yaml) will publish version `1.2.3` (without the v) to sonatype.
 

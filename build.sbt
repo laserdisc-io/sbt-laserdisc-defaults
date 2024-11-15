@@ -1,35 +1,60 @@
 ThisBuild / organization     := "io.laserdisc"
 ThisBuild / organizationName := "LaserDisc"
 
-// these are plugins that are needed by the projects that use _this_ plugin (see `LaserDiscDefaultsPlugin.requires`)
-addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.5.2")
-addSbtPlugin("com.github.sbt"                    % "sbt-git"             % "2.1.0")
-addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.10.4")
-addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.0.2")
+ThisBuild / scalaVersion := "2.12.20"
 
-lazy val root = project
-  .in(file("."))
+lazy val root = (project in file("."))
+  .aggregate(`plugin`, `plugin-shared`)
   .settings(
-    scalaVersion := "2.12.20",
-    sbtPlugin    := true,
-    name         := "sbt-laserdisc-defaults",
-    moduleName   := "sbt-laserdisc-defaults",
-    description  := "SBT defaults for LaserDisc projects",
-    compileSettings,
-    testSettings,
-    publishSettings,
-    dependencies,
+    name := "sbt-laserdisc-defaults-root",
     addCommandAlias("format", ";scalafmtAll;scalafmtSbt"),
     addCommandAlias("checkFormat", ";scalafmtCheckAll;scalafmtSbtCheck"),
     addCommandAlias("build", ";checkFormat;clean;scripted"), // note: `scripted` to invoke plugin tests
     addCommandAlias("release", ";build;publish")
   )
-  .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, BuildInfoPlugin, GitVersioning)
+
+lazy val plugin = project
+  .in(file("plugin"))
+  .settings(
+    name             := "sbt-laserdisc-defaults",
+    moduleName       := "sbt-laserdisc-defaults",
+    description      := "SBT defaults for LaserDisc projects",
+    buildInfoObject  := "PluginBuildInfo",
+    buildInfoPackage := "laserdisc.sbt",
+    scriptedLaunchOpts ++=
+      Seq(
+        "-Xmx1024M",
+        "--add-opens=java.base/java.util=ALL-UNNAMED", // to support sbt-dotenv
+        "--add-opens=java.base/java.lang=ALL-UNNAMED", // to support sbt-dotenv
+        s"-Dplugin.version=${version.value}",
+        s"-Dplugin.project.rootdir=${(ThisBuild / baseDirectory).value.absolutePath}",
+        s"-Dsbt.boot.directory=${file(sys.props("user.home")) / ".sbt" / "boot"}" // https://github.com/sbt/sbt/issues/3469
+      ),
+    scriptedBufferLog := false, // set to true to suppress detailed scripted test output
+    compileSettings,
+    publishSettings
+  )
+  .dependsOn(`plugin-shared`)
+  .enablePlugins(BuildInfoPlugin, SbtPlugin)
+
+lazy val `plugin-shared` = project
+  .in(file("plugin-shared"))
+  .settings(
+    name := "sbt-laserdisc-defaults-shared",
+    compileSettings,
+    publishSettings,
+    Compile / resourceGenerators += FileTemplates.copyToResources, // crucial for templating - see function comment
+    addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.5.2"),
+    addSbtPlugin("com.github.sbt"                    % "sbt-git"             % "2.1.0"),
+    addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.10.4"),
+    addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.0.2"),
+    libraryDependencies ++= Seq(
+      "org.apache.maven" % "maven-artifact" % "3.9.9"
+    )
+  )
+  .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, GitPlugin)
 
 def compileSettings = Seq(
-  Compile / resourceGenerators += FileTemplates.copyToResources,
-  buildInfoObject  := "PluginInfo",
-  buildInfoPackage := "laserdisc.sbt.defaults",
   scalacOptions ++= Seq(
     "-encoding",
     "UTF-8",                         // source files are in UTF-8
@@ -45,25 +70,12 @@ def compileSettings = Seq(
   )
 )
 
-def testSettings = Seq(
-  scriptedLaunchOpts ++=
-    Seq(
-      "-Xmx1024M",
-      "--add-opens=java.base/java.util=ALL-UNNAMED", // to support sbt-dotenv
-      "--add-opens=java.base/java.lang=ALL-UNNAMED", // to support sbt-dotenv
-      s"-Dplugin.version=${version.value}",
-      s"-Dplugin.project.rootdir=${(ThisBuild / baseDirectory).value.absolutePath}",
-      s"-Dsbt.boot.directory=${file(sys.props("user.home")) / ".sbt" / "boot"}" // https://github.com/sbt/sbt/issues/3469
-    ),
-  scriptedBufferLog := false // set to true to suppress detailed scripted test output
-)
-
 lazy val publishSettings = Seq(
   Test / publishArtifact := false,
   pomIncludeRepository   := (_ => false),
-  organization           := "io.laserdisc",
   homepage               := Some(url("http://laserdisc.io/sbt-laserdisc-defaults")),
   developers             := List(Developer("barryoneill", "Barry O'Neill", "", url("https://github.com/barryoneill"))),
+  publishMavenStyle      := true,
   scmInfo := Some(
     ScmInfo(
       url("https://github.com/laserdisc-io/sbt-laserdisc-defaults/tree/master"),
@@ -71,9 +83,4 @@ lazy val publishSettings = Seq(
     )
   ),
   licenses := Seq("MIT" -> url("https://raw.githubusercontent.com/laserdisc-io/sbt-laserdisc-defaults/master/LICENSE"))
-)
-
-// local dependencies for this plugin
-def dependencies = libraryDependencies ++= Seq(
-  "org.apache.maven" % "maven-artifact" % "3.9.9"
 )
