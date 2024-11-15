@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers.*
 import java.nio.file.Files
 import scala.collection.JavaConverters.*
 import com.github.sbt.git.SbtGit.GitKeys.gitReader
+import com.github.sbt.git.DefaultReadableGit
 
 ThisBuild / laserdiscRepoName := "sbt-laserdisc-defaults"
 
