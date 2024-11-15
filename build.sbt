@@ -7,6 +7,7 @@ lazy val root = (project in file("."))
   .aggregate(`plugin`, `plugin-shared`)
   .settings(
     name := "sbt-laserdisc-defaults-root",
+    publishArtifact := false,
     addCommandAlias("format", ";scalafmtAll;scalafmtSbt"),
     addCommandAlias("checkFormat", ";scalafmtCheckAll;scalafmtSbtCheck"),
     addCommandAlias("build", ";checkFormat;clean;scripted"), // note: `scripted` to invoke plugin tests
