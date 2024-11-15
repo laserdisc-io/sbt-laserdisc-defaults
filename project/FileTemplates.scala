@@ -5,8 +5,8 @@ object FileTemplates {
 
   val FileNames: List[String] = List(".scalafmt.conf", ".gitignore", "project/build.properties")
 
-  /** In order for the plugin to be able to template these config files at runtime, they need to
-    * be packaged with the plugin (so that they will be available in the classpath).
+  /** In order for plugin to be able to template these config files at runtime, they need to
+    * be packaged with the JAR (so that they will be available in the classpath).
     *
     * We could just maintain a separate set of files in the resources directory, but that's
     * a maintenance overhead, and why risk somebody updating one, but not the other.. :)

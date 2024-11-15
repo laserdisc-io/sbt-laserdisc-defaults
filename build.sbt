@@ -35,7 +35,6 @@ lazy val plugin = project
     publishSettings
   )
   .dependsOn(`plugin-shared`)
-//  .enablePlugins(BuildInfoPlugin, SbtPlugin)
   .enablePlugins(BuildInfoPlugin, SbtPlugin)
 
 lazy val `plugin-shared` = project
@@ -44,6 +43,7 @@ lazy val `plugin-shared` = project
     name := "sbt-laserdisc-defaults-shared",
     compileSettings,
     publishSettings,
+    Compile / resourceGenerators += FileTemplates.copyToResources, // crucial for templating - see function comment
     addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.5.2"),
     addSbtPlugin("com.github.sbt"                    % "sbt-git"             % "2.1.0"),
     addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.10.4"),
@@ -55,7 +55,6 @@ lazy val `plugin-shared` = project
   .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, GitPlugin)
 
 def compileSettings = Seq(
-  Compile / resourceGenerators += FileTemplates.copyToResources,
   scalacOptions ++= Seq(
     "-encoding",
     "UTF-8",                         // source files are in UTF-8

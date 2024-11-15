@@ -151,7 +151,7 @@ To build your own sbt plugin:
       override def licenseCheck: LicenseCheck = LicenseRequired
     }
     
-    // for context if logging/errors is neccessary (use https://github.com/sbt/sbt-buildinfo) 
+    // for context if logging/errors is necessary (use https://github.com/sbt/sbt-buildinfo) 
     override implicit val pluginCtx: PluginContext = PluginContext(
       pluginName = PluginBuildInfo.name,
       pluginVersion = PluginBuildInfo.version,
