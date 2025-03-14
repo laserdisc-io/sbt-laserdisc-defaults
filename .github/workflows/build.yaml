@@ -10,15 +10,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Branch Checkout
-        uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up JDK
+      - name: Install Java And Sbt
         uses: olafurpg/setup-scala@v14
         with:
           java-version: corretto@1.17
-      - name: Cache
+      - name: Cache SBT
         uses: actions/cache@v4
         with:
           path: |
@@ -27,5 +26,4 @@ jobs:
             $HOME/.sbt
           key: ${{ runner.os }}-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
       - name: Build
-        # build is required to trigger the sbt-scripted plugin tests
         run: sbt build

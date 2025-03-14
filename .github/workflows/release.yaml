@@ -4,12 +4,14 @@ on:
     tags: ["v*"]
 jobs:
   publish:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: olafurpg/setup-scala@v14
+      - name: Install Java And Sbt
+        uses: olafurpg/setup-scala@v14
         with:
           java-version: corretto@1.17
       - run: sbt ci-release

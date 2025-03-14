@@ -86,7 +86,7 @@ object LicenseRequired extends LicenseCheck {
   private def appearsMIT(content: String): Boolean =
     content
       .split("\n")
-      .filterNot(_.trim.isEmpty)
+      .filterNot(_.isBlank)
       .headOption
       .map(_.trim)
       .exists(
