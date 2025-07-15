@@ -66,9 +66,9 @@ lazy val root = (project in file("."))
     InputKey[Unit]("hasCompileOutput") := {
 
       val Scala2Class  = "target/scala-2.13/classes/foo/Test2Thing.class"
-      val Scala3Class  = "target/scala-3.3.5/classes/foo/Test3Thing.class"
+      val Scala3Class  = "target/scala-3.3.6/classes/foo/Test3Thing.class"
       val Scala2Common = "target/scala-2.13/classes/foo/TestCommonThing.class"
-      val Scala3Common = "target/scala-3.3.5/classes/foo/TestCommonThing.class"
+      val Scala3Common = "target/scala-3.3.6/classes/foo/TestCommonThing.class"
 
       spaceDelimited("<arg>").parsed.headOption
         .getOrElse(throw new MessageOnlyException("Missing argument for 'hasCompileOutput'")) match {
