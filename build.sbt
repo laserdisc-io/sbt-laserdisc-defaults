@@ -52,7 +52,7 @@ lazy val `plugin-shared` = project
     addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.11.1"),
     addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.0.2"),
     libraryDependencies ++= Seq(
-      "org.apache.maven" % "maven-artifact" % "3.9.10"
+      "org.apache.maven" % "maven-artifact" % "3.9.11"
     )
   )
   .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, GitPlugin)
@@ -79,7 +79,7 @@ lazy val publishSettings = Seq(
   homepage               := Some(url("http://laserdisc.io/sbt-laserdisc-defaults")),
   developers             := List(Developer("barryoneill", "Barry O'Neill", "", url("https://github.com/barryoneill"))),
   publishMavenStyle      := true,
-  scmInfo := Some(
+  scmInfo                := Some(
     ScmInfo(
       url("https://github.com/laserdisc-io/sbt-laserdisc-defaults/tree/master"),
       "scm:git:git@github.com:laserdisc-io/sbt-laserdisc-defaults.git"
