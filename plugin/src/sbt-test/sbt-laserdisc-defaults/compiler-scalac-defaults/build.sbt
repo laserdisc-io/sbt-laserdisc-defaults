@@ -44,7 +44,8 @@ lazy val root = (project in file("."))
               "-P:kind-projector:underscore-placeholders",
               "-Xlint",
               "-Ywarn-macros:after",
-              "-Wconf:src=src_managed/.*:silent"
+              "-Wconf:src=src_managed/.*:silent",
+              "-Wconf:cat=lint-infer-any&msg=kind-polymorphic:s"
             )
           )
 
