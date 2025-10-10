@@ -10,14 +10,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Install Java And Sbt
         uses: olafurpg/setup-scala@v14
         with:
           java-version: corretto@1.17
-      - name: Cache SBT
+      - name: Cache
         uses: actions/cache@v4
         with:
           path: |

@@ -67,10 +67,10 @@ case class Compiler(
 
   private object DefaultDeps {
 
-    lazy val All: Seq[ModuleID] = Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0")
+    lazy val All: Seq[ModuleID] = Seq("org.scala-lang.modules" %% "scala-collection-compat" % "2.14.0")
 
     lazy val Scala2_13: Seq[ModuleID] = Seq(
-      compilerPlugin(("org.typelevel" %% "kind-projector" % "0.13.3").cross(CrossVersion.full)),
+      compilerPlugin(("org.typelevel" %% "kind-projector" % "0.13.4").cross(CrossVersion.full)),
       compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
     )
 

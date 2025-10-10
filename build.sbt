@@ -49,7 +49,7 @@ lazy val `plugin-shared` = project
     Compile / resourceGenerators += FileTemplates.copyToResources, // crucial for templating - see function comment
     addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.5.5"),
     addSbtPlugin("com.github.sbt"                    % "sbt-git"             % "2.1.0"),
-    addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.11.1"),
+    addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.11.4"),
     addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.0.2"),
     libraryDependencies ++= Seq(
       "org.apache.maven" % "maven-artifact" % "3.9.11"
