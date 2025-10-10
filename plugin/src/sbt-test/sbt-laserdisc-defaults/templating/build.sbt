@@ -79,10 +79,14 @@ lazy val root = (project in file("."))
               s"""$actualFile does not appear to have been templated from $sourceFile
                  |
                  |Expected content (minus comments):
+                 |---expected-begin---
                  |$sourceNonCommentLines
+                 |---expected-end---
                  |
                  |But actual content was (minus comments):
+                 |---actual-begin---
                  |$actualNonCommentLines
+                 |---actual-end---
                  |""".stripMargin
             )
           }
