@@ -6,8 +6,8 @@ package laserdisc.sbt
 sealed abstract class CompileTarget(val defaultScalaVersion: String, val crossVersions: Seq[String])
 object CompileTarget {
 
-  val Scala2Version: String = "2.13.17"
-  val Scala3Version: String = "3.3.6"
+  val Scala2Version: String = "2.13.18"
+  val Scala3Version: String = "3.3.7"
 
   final case object Scala2Only extends CompileTarget(Scala2Version, List(Scala2Version))
 

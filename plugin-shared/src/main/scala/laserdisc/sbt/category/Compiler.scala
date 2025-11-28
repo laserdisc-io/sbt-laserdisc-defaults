@@ -57,9 +57,7 @@ case class Compiler(
       "-P:kind-projector:underscore-placeholders",
       "-Xlint",
       "-Ywarn-macros:after",
-      "-Wconf:src=src_managed/.*:silent",
-      // 2.13.17 brings in a bug - https://github.com/scala/bug/issues/13128
-      "-Wconf:cat=lint-infer-any&msg=kind-polymorphic:s"
+      "-Wconf:src=src_managed/.*:silent"
     )
 
     val Test: Seq[String] = Seq(
