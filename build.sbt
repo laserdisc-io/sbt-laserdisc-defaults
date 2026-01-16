@@ -1,7 +1,7 @@
 ThisBuild / organization     := "io.laserdisc"
 ThisBuild / organizationName := "LaserDisc"
 
-ThisBuild / scalaVersion := "2.12.20"
+ThisBuild / scalaVersion := "2.12.21"
 
 ThisBuild / sbtPluginPublishLegacyMavenStyle := false // since Jun 25, maven central rejects inconsistent POMs
 
@@ -49,9 +49,9 @@ lazy val `plugin-shared` = project
     Compile / resourceGenerators += FileTemplates.copyToResources, // crucial for templating - see function comment
     addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.5.6"),
     addSbtPlugin("com.github.sbt"                    % "sbt-git"             % "2.1.0"),
-    addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.11.4"),
+    addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.11.7"),
     addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.0.2"),
-    libraryDependencies += "org.apache.maven" % "maven-artifact" % "3.9.11"
+    libraryDependencies += "org.apache.maven" % "maven-artifact" % "3.9.12"
   )
   .enablePlugins(SbtPlugin, JavaAppPackaging, ScalafmtPlugin, GitPlugin)
 
