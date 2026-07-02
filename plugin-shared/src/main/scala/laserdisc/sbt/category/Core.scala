@@ -14,7 +14,7 @@ case class Core()(implicit val ctx: PluginContext) extends DefaultsCategory {
   override def projectSettings: Seq[Def.Setting[State => State]] =
     addCommandAlias("format", s";${scalafmtAll.key.label};${scalafmtSbt.key.label}") ++
       addCommandAlias("checkFormat", s";${scalafmtCheckAll.key.label};${scalafmtSbtCheck.key.label}") ++
-      addCommandAlias("build", s";checkFormat; ${clean.key.label}; +${test.key.label}") ++
+      addCommandAlias("build", s";checkFormat; ${clean.key.label}; +${testFull.key.label}") ++
       addCommandAlias("release", s";build; +${publish.key.label}")
 
   override def buildSettings: Seq[Def.Setting[?]] = Seq(

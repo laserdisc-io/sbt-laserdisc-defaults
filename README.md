@@ -52,7 +52,7 @@ When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserd
 * Add some common command aliases:
     * **`sbt format`** - formats all Scala and SBT sources (According to `.scalafmt.conf`, see below)
     * **`sbt checkFormat`** - ensures all Scala and SBT sources are formatted correctly
-    * **`sbt build`** - shortcut for `checkFormat`, `clean`, then `test`
+    * **`sbt build`** - shortcut for `checkFormat`, `clean`, then `testFull` (note, not `test`, which may not run tests based on sbt incremental task cache)
     * **`sbt release`** - shortcut for `build` (above) then `publish`.
 
 
