@@ -20,7 +20,7 @@ abstract class FileTemplater {
     */
   def outputFile: File
 
-  private[this] def stripCommentary(in: Seq[String]): Seq[String] =
+  private def stripCommentary(in: Seq[String]): Seq[String] =
     in.dropWhile(_.isBlank).filter(!_.matches("^\\s*###.*$"))
 
   // names have to be unique, so let's use the impl class name

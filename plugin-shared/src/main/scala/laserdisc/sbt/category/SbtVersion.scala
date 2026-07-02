@@ -2,14 +2,13 @@ package laserdisc.sbt.category
 
 import laserdisc.sbt.*
 import laserdisc.sbt.category.SbtVersion.*
-import laserdisc.sbt.io.{FileTemplater, readResourceStream}
+import laserdisc.sbt.io.{readResourceStream, FileTemplater}
 import org.apache.maven.artifact.versioning.ComparableVersion
 import sbt.*
 
-import java.io.ByteArrayInputStream
+import java.io.{ByteArrayInputStream, InputStream}
 import java.util.Properties
-import scala.collection.JavaConverters.*
-import scala.tools.nsc.interpreter.InputStream
+import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
 
 object SbtVersion {

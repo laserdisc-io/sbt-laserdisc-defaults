@@ -1,6 +1,6 @@
 package laserdisc.sbt
 
-import sbt.{Developer, url}
+import sbt.{url, Developer}
 
 /** Convenience so we don't have to repeat all this info in each laserdisc project
   */

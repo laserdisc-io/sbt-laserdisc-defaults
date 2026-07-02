@@ -62,14 +62,16 @@ When SBT loads your project, the [LaserDiscDefaultsPlugin](src/main/scala/laserd
   * ```sbt
     import laserdisc.sbt.CompileTarget
 
-    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala2Only   // builds only for scala 2
-    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala3Only   // builds only for scala 3 (default) 
-    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala2And3   // cross compile both
+    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala3Only      // default! 
+    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala2Only
+    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala3LTSOnly 
+    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala2And3
+    ThisBuild / laserdiscCompileTarget := CompileTarget.Scala2And3LTS
     ```
     Remember that you need to use `+` in front of compilation-triggering tasks to trigger cross-compilation.
     The `build` alias added by this plugin automatically invokes `+test`.
 * Apply our standard set of `scalacOptions` compiler and linting configurations (for each scala version). 
-  * This includes `-Xfatal-warnings` which fails the build by default if warnings are present.
+  * This includes warnings-as-errors (via `-Werror` for Scala 3 and Scala 2.13+, or `-Xfatal-warnings` for older Scala 2) which fails the build by default if warnings are present.
     * This can be disabled via two mechanisms:
         * `set ThisBuild / laserdiscFailOnWarn := false` in the top level of your `build.sbt` (don't check this in!)
         * passing `-DlaserdiscFailOnWarn=false` as [a SBT option](https://www.scala-sbt.org/1.x/docs/Command-Line-Reference.html#sbt+JVM+options+and+system+properties) (useful for local dev)

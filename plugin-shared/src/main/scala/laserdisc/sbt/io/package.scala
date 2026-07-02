@@ -25,7 +25,7 @@ package object io {
   def readResourceLines(log: Logger, resource: String)(implicit ctx: PluginContext): List[String] =
     Try {
       log.pluginDebug(s"Attempting to load resource '$resource'")
-      Source.fromResource(resource, getClass.getClassLoader).getLines().toList
+      Source.fromResource(resource, classOf[PluginContext].getClassLoader).getLines().toList
     } match {
       case Success(value) => value
       case Failure(e)     => fail(s"Failed to load resource $resource", e)
@@ -33,7 +33,7 @@ package object io {
 
   def readResourceStream(log: Logger, resource: String)(implicit ctx: PluginContext): InputStream = {
     log.pluginDebug(s"Attempting to load resource stream '$resource'")
-    val res = getClass.getClassLoader.getResourceAsStream(resource)
+    val res = classOf[PluginContext].getClassLoader.getResourceAsStream(resource)
     if (res == null) {
       throw new IllegalArgumentException(s"Resource '$resource' not found")
     }

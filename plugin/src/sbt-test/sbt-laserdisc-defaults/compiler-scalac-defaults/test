@@ -8,26 +8,43 @@
 
 # ------------------------------------------------------------------------------------------
 # should be the same when the flag is explicitly set for scala 3
+# (note: sbt 2.x `clean` only cleans the active scala version's output in the unified target
+#  directory, so delete it entirely to avoid leftovers from the previous scenario)
 > set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala3Only
-> clean
+$ delete target
 > +compile
 > hasCompilerFlags 3
 > hasCompileOutput shouldOnlyCompileForScala3
 
 # ------------------------------------------------------------------------------------------
+# check that only scala3 LTS output is generated
+> set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala3LTSOnly
+$ delete target
+> +compile
+> hasCompilerFlags 3
+> hasCompileOutput shouldOnlyCompileForScala3LTS
+
+# ------------------------------------------------------------------------------------------
 # check that only scala2 output is generated
 > set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala2Only
-> clean
+$ delete target
 > +compile
 > hasCompilerFlags 2
 > hasCompileOutput shouldOnlyCompileForScala2
 
 # ------------------------------------------------------------------------------------------
-# check that cross compiling works
+# check that cross compiling 2 & 3 works
 > set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala2And3
-> clean
+$ delete target
 > +compile
 > hasCompileOutput shouldCrossCompileFor2And3
+
+# ------------------------------------------------------------------------------------------
+# check that cross compiling 2 & 3 LTS works
+> set ThisBuild / laserdiscCompileTarget := laserdisc.sbt.CompileTarget.Scala2And3LTS
+$ delete target
+> +compile
+> hasCompileOutput shouldCrossCompileFor2And3LTS
 
 # ------------------------------------------------------------------------------------------
 # the "build" alias should also invoke +compile for cross compilation

@@ -13,7 +13,7 @@ case class Standards()(implicit val ctx: PluginContext) extends DefaultsCategory
   private lazy val laserdiscCheckForCodeOwners = taskKey[Unit]("Check that the repo has a valid CODEOWNERS file")
 
   override def projectSettings: Seq[Def.Setting[?]] = Seq(
-    laserdiscCheckForCodeOwners := {
+    laserdiscCheckForCodeOwners := Def.uncached {
       val target = file("CODEOWNERS")
       verifyNonEmptyFileExists(
         log = log.value,

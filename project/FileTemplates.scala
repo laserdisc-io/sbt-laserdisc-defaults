@@ -14,7 +14,7 @@ object FileTemplates {
     * This function copies the files in use by this project into managed resources, so
     * they'll be bundled into the plugin zip distribution.
     */
-  def copyToResources: Def.Initialize[Task[List[File]]] = Def.task {
+  def copyToResources: Def.Initialize[Task[Seq[File]]] = Def.task {
 
     val DestDir: File = (Compile / resourceManaged).value / "templates"
 

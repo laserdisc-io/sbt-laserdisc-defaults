@@ -1,22 +1,35 @@
+import com.github.sbt.git.DefaultReadableGit
+import com.github.sbt.git.SbtGit.GitKeys.gitReader
 import complete.DefaultParsers.*
 import org.scalatest.matchers.should.Matchers.*
-
+import laserdisc.sbt.CompileTarget.*
 import java.nio.file.Files
-import scala.collection.JavaConverters.*
-import com.github.sbt.git.SbtGit.GitKeys.gitReader
-import com.github.sbt.git.DefaultReadableGit
+import scala.jdk.CollectionConverters.*
 
 ThisBuild / laserdiscRepoName := "sbt-laserdisc-defaults"
 
 // during scripted tests, the root of the project will not be the root of the repo so the git plugin will fail - this works around it
-val ProjectRoot = sys.props.getOrElse("plugin.project.rootdir", sys.error("expected system property \"plugin.project.rootdir\" to be provided"))
-ThisProject / gitReader :=  new DefaultReadableGit(file(ProjectRoot),None)
+val ProjectRoot = sys.props.getOrElse(
+  "plugin.project.rootdir",
+  sys.error("expected system property \"plugin.project.rootdir\" to be provided")
+)
+ThisProject / gitReader := new DefaultReadableGit(file(ProjectRoot), None)
 
 lazy val root = (project in file("."))
   .enablePlugins(LaserDiscDefaultsPlugin)
   .settings(
-
     InputKey[Unit]("hasCompilerFlags") := {
+
+      val expectedFailOnWarnFlag = CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((3, _))                     => "-Werror"
+        case Some((2, minor)) if minor >= 13 => "-Werror"
+        case _                                => "-Xfatal-warnings"
+      }
+
+      val expectedScala3KindProjectorFlag = CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((3, minor)) if minor <= 3 => "-Ykind-projector:underscores"
+        case _                              => "-Xkind-projector:underscores"
+      }
 
       val commonExpected = List(
         "-encoding",
@@ -25,7 +38,7 @@ lazy val root = (project in file("."))
         "-unchecked",
         "-feature",
         "-language:existentials,experimental.macros,higherKinds,implicitConversions,postfixOps",
-        "-Xfatal-warnings"
+        expectedFailOnWarnFlag
       )
 
       spaceDelimited("<arg>").parsed.headOption
@@ -53,7 +66,7 @@ lazy val root = (project in file("."))
             commonExpected ++ List(
               "-Yretain-trees",
               "-Xmax-inlines:100",
-              "-Ykind-projector:underscores",
+              expectedScala3KindProjectorFlag,
               "-source:future",
               "-language:adhocExtensions",
               "-Wconf:msg=`= _` has been deprecated; use `= uninitialized` instead.:s"
@@ -65,10 +78,12 @@ lazy val root = (project in file("."))
     },
     InputKey[Unit]("hasCompileOutput") := {
 
-      val Scala2Class  = "target/scala-2.13/classes/foo/Test2Thing.class"
-      val Scala3Class  = "target/scala-3.3.7/classes/foo/Test3Thing.class"
-      val Scala2Common = "target/scala-2.13/classes/foo/TestCommonThing.class"
-      val Scala3Common = "target/scala-3.3.7/classes/foo/TestCommonThing.class"
+      val Scala2Class     = s"target/out/jvm/scala-${Scala2Version}/root/classes/foo/Test2Thing.class"
+      val Scala3Class     = s"target/out/jvm/scala-${Scala3Version}/root/classes/foo/Test3Thing.class"
+      val Scala3LTSClass  = s"target/out/jvm/scala-${Scala3LTSVersion}/root/classes/foo/Test3Thing.class"
+      val Scala2Common    = s"target/out/jvm/scala-${Scala2Version}/root/classes/foo/TestCommonThing.class"
+      val Scala3Common    = s"target/out/jvm/scala-${Scala3Version}/root/classes/foo/TestCommonThing.class"
+      val Scala3LTSCommon = s"target/out/jvm/scala-${Scala3LTSVersion}/root/classes/foo/TestCommonThing.class"
 
       spaceDelimited("<arg>").parsed.headOption
         .getOrElse(throw new MessageOnlyException("Missing argument for 'hasCompileOutput'")) match {
@@ -76,18 +91,30 @@ lazy val root = (project in file("."))
         case "shouldOnlyCompileForScala2" =>
           checkFor(
             expected = List(Scala2Common, Scala2Class),
-            notExpected = List(Scala3Common, Scala3Class)
+            notExpected = List(Scala3Common, Scala3LTSCommon, Scala3Class, Scala3LTSClass)
           )
 
         case "shouldOnlyCompileForScala3" =>
           checkFor(
             expected = List(Scala3Common, Scala3Class),
-            notExpected = List(Scala2Common, Scala2Class)
+            notExpected = List(Scala2Common, Scala2Class, Scala3LTSClass, Scala3LTSCommon)
+          )
+
+        case "shouldOnlyCompileForScala3LTS" =>
+          checkFor(
+            expected = List(Scala3LTSCommon, Scala3LTSClass),
+            notExpected = List(Scala2Common, Scala2Class, Scala3Common, Scala3Class)
           )
 
         case "shouldCrossCompileFor2And3" =>
           checkFor(
             expected = List(Scala2Common, Scala3Common, Scala2Class, Scala3Class),
+            notExpected = List()
+          )
+
+        case "shouldCrossCompileFor2And3LTS" =>
+          checkFor(
+            expected = List(Scala2Common, Scala3LTSCommon, Scala2Class, Scala3LTSClass),
             notExpected = List()
           )
 
@@ -97,7 +124,7 @@ lazy val root = (project in file("."))
 
       def checkFor(expected: List[String], notExpected: List[String]): Unit = {
 
-        val allClassFiles = Files
+        val foundClassFiles = Files
           .walk(file("target").toPath)
           .iterator()
           .asScala
@@ -106,14 +133,17 @@ lazy val root = (project in file("."))
           .filter(_.endsWith("class"))
           .toList
 
-        val found = "\n" + allClassFiles.map(s => s"found - ${s}").mkString("\n")
+        val found = "\n" + foundClassFiles.map(s => s"found - ${s}").mkString("\n")
 
-        for (f <- expected if !allClassFiles.contains(f))
-          throw new MessageOnlyException(s"Could not find expected classfile '$f' in compiled output:$found")
+        expected.foreach { filename =>
+          if (!foundClassFiles.exists(_ == filename))
+            throw new MessageOnlyException(s"Could not find expected classfile '$filename' in compiled output:$found")
+        }
 
-        for (f <- notExpected if allClassFiles.contains(f))
-          throw new MessageOnlyException(s"Did not expect to see '$f' in compiled output:$found")
-
+        notExpected.foreach { filename =>
+          if (foundClassFiles.exists(_ == filename))
+            throw new MessageOnlyException(s"Did not expect to find classfile '$filename' in compiled output:$found")
+        }
       }
     }
   )
