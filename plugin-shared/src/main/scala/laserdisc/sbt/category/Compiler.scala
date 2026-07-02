@@ -10,7 +10,8 @@ object Compiler {
   private val CompileTargetDefault: CompileTarget = Scala3Only
 
   val FailOnWarnKeyDesc: String    = s"Fail the build if any warnings are present (default: $FailOnWarnDefault)"
-  val CompileTargetKeyDesc: String = s"'Scala2Only', 'Scala3Only', or 'Scala2And3' to cross-compile (default:$CompileTargetDefault)"
+  val CompileTargetKeyDesc: String =
+    s"One of:[Scala2Only,Scala3Only,Scala3LTSOnly], or to cross compile:[Scala2And3,Scala2And3LTS].  Default is:$CompileTargetDefault"
 }
 
 /** Applies scala compiler settings, including scala version and compiler flags
@@ -26,7 +27,7 @@ case class Compiler(
   import laserdisc.sbt.category.Compiler.*
 
   private object ScalacFlags {
-    def Common(failOnWarn: Boolean): Seq[String] = Seq(
+    def Common(failOnWarn: Boolean, currentScalaVersion: String): Seq[String] = Seq(
       "-encoding",
       "UTF-8",
       "-deprecation",
@@ -34,17 +35,31 @@ case class Compiler(
       "-feature",
       "-language:existentials,experimental.macros,higherKinds,implicitConversions,postfixOps"
     ) ++
-      (if (failOnWarn) Seq("-Xfatal-warnings") else Seq())
+      (if (failOnWarn) Seq(FailOnWarnFlag(currentScalaVersion)) else Seq())
+
+    private def FailOnWarnFlag(currentScalaVersion: String): String =
+      CrossVersion.partialVersion(currentScalaVersion) match {
+        case Some((3, _))                    => "-Werror"
+        case Some((2, minor)) if minor >= 13 => "-Werror"
+        case _                               => "-Xfatal-warnings"
+      }
 
     // remove -Wconf:src filter should be available in scala 3.5.x
-    lazy val Version3x: Seq[String] = Seq(
+    def Version3x(currentScalaVersion: String): Seq[String] = Seq(
       "-Yretain-trees",
       "-Xmax-inlines:100",
-      "-Ykind-projector:underscores",
+      Scala3KindProjectorFlag(currentScalaVersion),
       "-source:future",
       "-language:adhocExtensions",
       "-Wconf:msg=`= _` has been deprecated; use `= uninitialized` instead.:s"
     )
+
+    // Scala 3 LTS (3.3.x) keeps the old flag spelling, newer Scala 3 uses -Xkind-projector.
+    private def Scala3KindProjectorFlag(currentScalaVersion: String): String =
+      CrossVersion.partialVersion(currentScalaVersion) match {
+        case Some((3, minor)) if minor <= 3 => "-Ykind-projector:underscores"
+        case _                              => "-Xkind-projector:underscores"
+      }
 
     lazy val Version2_13: Seq[String] = Seq(
       "-Xlint:-unused,_",
@@ -77,10 +92,10 @@ case class Compiler(
   }
 
   override def projectSettings: Seq[Def.Setting[?]] = Seq(
-    scalacOptions ++= ScalacFlags.Common(failOnWarnKey.value),
+    scalacOptions ++= ScalacFlags.Common(failOnWarnKey.value, scalaVersion.value),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((3, _))                    => ScalacFlags.Version3x
+        case Some((3, _))                    => ScalacFlags.Version3x(scalaVersion.value)
         case Some((2, minor)) if minor >= 13 => ScalacFlags.Version2_13
         case _                               => Seq.empty
       }

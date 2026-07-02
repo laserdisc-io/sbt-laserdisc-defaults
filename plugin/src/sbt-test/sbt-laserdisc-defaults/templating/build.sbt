@@ -2,7 +2,7 @@ import complete.DefaultParsers.*
 
 import java.io.ByteArrayInputStream
 import java.util.Properties
-import scala.collection.JavaConverters.*
+import scala.jdk.CollectionConverters.*
 import scala.util.{Failure, Success, Try}
 
 ThisBuild / laserdiscRepoName := "sbt-laserdisc-defaults"

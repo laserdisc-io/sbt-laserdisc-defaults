@@ -2,7 +2,7 @@ package laserdisc.sbt
 
 import laserdisc.sbt.io.readFile
 import sbt.librarymanagement.License.MIT
-import sbt.{Logger, ScmInfo, URL, file, url}
+import sbt.{file, url, Logger, ScmInfo, URI}
 
 /** Used to define plugin-wide defaults related to packaging and identity
   */
@@ -17,7 +17,7 @@ trait PublishDefaults {
   /** Get the homepage associated with this plugin
     * @param repoName The repository name for the current project, which might be useful for building a repo-based URL
     */
-  def homepage(repoName: String): URL
+  def homepage(repoName: String): URI
 
   /** @return The SCM information used when building deployable packages
     */
@@ -31,7 +31,7 @@ trait PublishDefaults {
 trait GithubPublishDefaults extends PublishDefaults {
   def githubOrg: String
 
-  override def homepage(repoName: String): URL = url(s"https://github.com/$githubOrg/$repoName")
+  override def homepage(repoName: String): URI = url(s"https://github.com/$githubOrg/$repoName")
 
   override def scmInfo(repoName: String, gitBranch: String): ScmInfo = ScmInfo(
     url(s"https://github.com/$githubOrg/$repoName/tree/$gitBranch"),

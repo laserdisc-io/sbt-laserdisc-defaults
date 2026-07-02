@@ -2,6 +2,7 @@ package laserdisc.sbt.category
 
 import com.github.sbt.git.ReadableGit
 import com.github.sbt.git.SbtGit.GitKeys.gitReader
+import com.typesafe.sbt.packager.Keys.maintainer
 import laserdisc.sbt.{DefaultsCategory, PluginContext, PublishDefaults}
 import sbt.*
 import sbt.Keys.*
@@ -32,8 +33,9 @@ case class Publishing(
       pomIncludeRepository := (_ => false),
       organization         := publishDefaultsKey.value.groupId,
       organizationName     := publishDefaultsKey.value.orgName,
-      homepage             := publishDefaultsKey.value.homepage(repoNameKey.value).some,
-      scmInfo              := publishDefaultsKey.value.scmInfo(repoNameKey.value, getBranchName(gitReader.value)).some,
+      maintainer           := publishDefaultsKey.value.orgName,
+      homepage             := Some(publishDefaultsKey.value.homepage(repoNameKey.value)),
+      scmInfo              := Some(publishDefaultsKey.value.scmInfo(repoNameKey.value, getBranchName(gitReader.value))),
       licenses             := publishDefaultsKey.value.licenseCheck.validate(licenses.value, logger.value)
     )
 

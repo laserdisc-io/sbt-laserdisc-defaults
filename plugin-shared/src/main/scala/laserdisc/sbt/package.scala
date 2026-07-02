@@ -4,7 +4,7 @@ import _root_.sbt.*
 
 package object sbt {
 
-  type PublishLicense = (String, URL)
+  type PublishLicense = _root_.sbt.librarymanagement.License
 
   object UsefulURLs {
 
@@ -24,7 +24,7 @@ package object sbt {
   // add some consistency to the logs
   implicit class LoggerOps(val logger: Logger) extends AnyVal {
 
-    private[this] def fmt(msg: String)(implicit ctx: PluginContext): String = s"[${ctx.pluginName}] $msg"
+    private def fmt(msg: String)(implicit ctx: PluginContext): String = s"[${ctx.pluginName}] $msg"
 
     def pluginDebug(value: String)(implicit ctx: PluginContext): Unit = logger.debug(fmt(value))
 

@@ -12,7 +12,7 @@ trait DefaultsCategory {
     s"$msg [${cause.getClass.getSimpleName}:${cause.getMessage}]"
   )
 
-  protected[this] val logger = Keys.sLog
+  protected val logger = Keys.sLog
 
   /** @return build level settings to be applied
     */
