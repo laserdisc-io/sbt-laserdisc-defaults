@@ -18,6 +18,6 @@ object CompileTarget {
 
   case object Scala2And3 extends CompileTarget(Scala3Version, List(Scala2Version, Scala3Version))
 
-  case object Scala2And3LTS extends CompileTarget(Scala3Version, List(Scala2Version, Scala3LTSVersion))
+  case object Scala2And3LTS extends CompileTarget(Scala3LTSVersion, List(Scala2Version, Scala3LTSVersion))
 
 }
