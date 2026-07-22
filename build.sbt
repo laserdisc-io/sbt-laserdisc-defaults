@@ -47,11 +47,11 @@ lazy val `plugin-shared` = project
     compileSettings,
     publishSettings,
     Compile / resourceGenerators += FileTemplates.copyToResources, // crucial for templating - see function comment
-    addSbtPlugin("org.scalameta"  % "sbt-scalafmt"        % "2.6.1"),
+    addSbtPlugin("org.scalameta"  % "sbt-scalafmt"        % "2.6.2"),
     addSbtPlugin("com.github.sbt" % "sbt-git"             % "2.1.0"),
     addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.11.7"),
     addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "3.0.3+10-a67392d4"), // oldest release with an sbt 2.x artifact
-    libraryDependencies += "org.apache.maven" % "maven-artifact" % "3.9.12"
+    libraryDependencies += "org.apache.maven" % "maven-artifact" % "3.9.16"
   )
   .enablePlugins(SbtPlugin, ScalafmtPlugin, GitPlugin)
 
@@ -72,14 +72,14 @@ def compileSettings = Seq(
 
 lazy val publishSettings = Seq(
   pomIncludeRepository := (_ => false),
-  homepage             := Some(url("http://laserdisc.io/sbt-laserdisc-defaults")),
-  developers           := List(Developer("barryoneill", "Barry O'Neill", "", url("https://github.com/barryoneill"))),
+  homepage             := Some(uri("http://laserdisc.io/sbt-laserdisc-defaults")),
+  developers           := List(Developer("barryoneill", "Barry O'Neill", "", uri("https://github.com/barryoneill"))),
   publishMavenStyle    := true,
   scmInfo              := Some(
     ScmInfo(
-      url("https://github.com/laserdisc-io/sbt-laserdisc-defaults/tree/master"),
+      uri("https://github.com/laserdisc-io/sbt-laserdisc-defaults/tree/master"),
       "scm:git:git@github.com:laserdisc-io/sbt-laserdisc-defaults.git"
     )
   ),
-  licenses := Seq(License("MIT", url("https://raw.githubusercontent.com/laserdisc-io/sbt-laserdisc-defaults/master/LICENSE")))
+  licenses := Seq(License("MIT", uri("https://raw.githubusercontent.com/laserdisc-io/sbt-laserdisc-defaults/master/LICENSE")))
 )
