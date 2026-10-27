@@ -47,11 +47,11 @@ lazy val `plugin-shared` = project
     compileSettings,
     publishSettings,
     Compile / resourceGenerators += FileTemplates.copyToResources, // crucial for templating - see function comment
-    addSbtPlugin("org.scalameta"  % "sbt-scalafmt"        % "2.6.2"),
-    addSbtPlugin("com.github.sbt" % "sbt-git"             % "2.1.0"),
-    addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.11.7"),
-    addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings" % "3.0.3+10-a67392d4"), // oldest release with an sbt 2.x artifact
-    libraryDependencies += "org.apache.maven" % "maven-artifact" % "3.9.16"
+    addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"        % "2.6.2"),
+    addSbtPlugin("com.github.sbt"                    % "sbt-git"             % "2.2.0"),
+    addSbtPlugin("com.github.sbt"                    % "sbt-native-packager" % "1.13.0"),
+    addSbtPlugin("com.thoughtworks.sbt-api-mappings" % "sbt-api-mappings"    % "3.1.0"),
+    libraryDependencies += "org.apache.maven" % "maven-artifact" % "3.10.0"
   )
   .enablePlugins(SbtPlugin, ScalafmtPlugin, GitPlugin)
 

@@ -7,7 +7,7 @@ sealed abstract class CompileTarget(val defaultScalaVersion: String, val crossVe
 object CompileTarget {
 
   val Scala2Version: String    = "2.13.18"
-  val Scala3Version: String    = "3.8.4"
+  val Scala3Version: String    = "3.9.0"
   val Scala3LTSVersion: String = "3.3.8"
 
   case object Scala2Only extends CompileTarget(Scala2Version, List(Scala2Version))
